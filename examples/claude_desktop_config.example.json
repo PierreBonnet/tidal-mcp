@@ -1,0 +1,14 @@
+{
+  "mcpServers": {
+    "tidal-mcp": {
+      "command": "C:/mcp/tidal-mcp/.venv/Scripts/python.exe",
+      "args": [
+        "-m",
+        "tidal_mcp"
+      ],
+      "env": {
+        "TIDAL_MCP_ENABLE_WRITES": "false"
+      }
+    }
+  }
+}

@@ -147,8 +147,10 @@ def create_server(runtime: Runtime | None = None) -> MCPServer:
         description="Local-first catalog, library, recommendation, and approved-playlist tools.",
         instructions=(
             "Use read-only tools freely when relevant. Never claim mood filtering is performed by "
-            "TIDAL. Playlist creation requires an exact preview followed by an approved commit "
-            "token."
+            "TIDAL. Every remote write requires an exact preview, explicit user approval, "
+            "and the corresponding commit token. Check tidal_auth_status first. "
+            "If authentication is missing, ask the user to run tidal-auth locally; "
+            "never request OAuth tokens in chat."
         ),
         version="1.0.1",
     )
