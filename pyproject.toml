@@ -1,0 +1,83 @@
+[project]
+name = "tidal-mcp"
+version = "1.0.1"
+description = "The complete, safety-first Model Context Protocol server for TIDAL."
+readme = "README.md"
+requires-python = ">=3.11,<3.14"
+license = "MIT"
+authors = [
+    { name = "sickn33" },
+]
+keywords = [
+    "tidal",
+    "mcp",
+    "model-context-protocol",
+    "music",
+    "ai-assistant",
+    "claude",
+    "codex",
+]
+classifiers = [
+    "Development Status :: 5 - Production/Stable",
+    "Environment :: Console",
+    "Operating System :: MacOS",
+    "Operating System :: POSIX :: Linux",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Programming Language :: Python :: 3.13",
+    "Topic :: Multimedia :: Sound/Audio",
+]
+dependencies = [
+    "mcp>=2.0.0,<3",
+    "platformdirs>=4.4,<5",
+    "pydantic>=2.12,<3",
+    "requests>=2.34.2,<3",
+    "tidalapi==0.8.11",
+    "urllib3>=2.7.0,<3",
+]
+
+[project.scripts]
+tidal-mcp = "tidal_mcp.server:main"
+tidal-local-mcp = "tidal_mcp.server:main"
+tidal-auth = "tidal_mcp.auth_cli:main"
+
+[project.urls]
+Homepage = "https://github.com/sickn33/tidal-mcp"
+Documentation = "https://github.com/sickn33/tidal-mcp#readme"
+Issues = "https://github.com/sickn33/tidal-mcp/issues"
+Source = "https://github.com/sickn33/tidal-mcp"
+
+[dependency-groups]
+dev = [
+    "pytest>=9.1.1,<10",
+    "pytest-cov>=7,<8",
+    "ruff>=0.13,<1",
+]
+
+[build-system]
+requires = ["setuptools>=77"]
+build-backend = "setuptools.build_meta"
+
+[tool.setuptools.packages.find]
+where = ["src"]
+
+[tool.pytest.ini_options]
+addopts = "-q"
+testpaths = ["tests"]
+
+[tool.coverage.run]
+branch = true
+source = ["tidal_mcp"]
+
+[tool.coverage.report]
+fail_under = 100
+show_missing = true
+skip_covered = true
+
+[tool.ruff]
+line-length = 100
+target-version = "py311"
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B", "SIM", "RUF"]
