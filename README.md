@@ -1,33 +1,61 @@
 # tidal-mcp
 
 [![Soutenir sur Ko-fi](https://img.shields.io/badge/Ko--fi-Soutenir%20le%20projet-FF5E5B?logo=ko-fi&logoColor=white)](https://ko-fi.com/pierrobn)
-Community derivative of [sickn33/tidal-mcp](https://github.com/sickn33/tidal-mcp), prepared for public source distribution. The upstream MIT license and required attribution are retained. This repository starts with a fresh Git history.
 
-## Install and run
+Serveur MCP pour rechercher de la musique et consulter ou organiser une collection TIDAL. Dérivé communautaire de [sickn33/tidal-mcp](https://github.com/sickn33/tidal-mcp), sous licence MIT ; les attributions d'origine sont conservées.
 
-Requires Python 3.11–3.13.
+## Installation
+
+Prérequis : **Python 3.11 à 3.13**.
 
 ```sh
+git clone https://github.com/pierro-bn/tidal-mcp.git
+cd tidal-mcp
 python -m venv .venv
-# Activate .venv using the command appropriate to your shell.
-python -m pip install -e .
-python -m pip install pytest
-python -m pytest
-tidal-auth
-tidal-mcp
 ```
 
-Configure your MCP client to launch the installed `tidal-mcp` executable over stdio. Run `tidal-auth` interactively once to authorize your own account. The session is stored in the platform user-data directory. Optional local settings: `TIDAL_MCP_DATA_DIR`, `TIDAL_MCP_SESSION_FILE`, `TIDAL_MCP_DRAFT_TTL_SECONDS` (60–3600). Writes are disabled by default; enable them with `TIDAL_MCP_ENABLE_WRITES=true`. Mutations require the preview/commit approval flow.
+Activez l'environnement avec `.venv\Scripts\Activate.ps1` sous PowerShell ou `source .venv/bin/activate` sous macOS/Linux, puis :
 
-## Privacy
+```sh
+python -m pip install -e .
+tidal-auth
+```
 
-No account configuration, OAuth sessions, personal exports, or local Git history are distributed. Examples and tests use fixtures. Never commit your local credentials or session files. Runtime tools can return information from the account you connect; review outputs before sharing them.
+Autorisez votre compte avec le lien affiché par `tidal-auth`. Configurez ensuite le client MCP pour lancer l'exécutable installé `tidal-mcp`, ou le Python de cet environnement avec `-m tidal_mcp`. Le transport est **stdio**. L'authentification interactive se fait avant le lancement par le client MCP.
+
+## Fonctionnalités et configuration
+
+Recherche de titres, albums et artistes, consultation des favoris et playlists, recommandations et organisation de la collection. Commencez par `tidal_auth_status` ; utilisez notamment `tidal_search`, `tidal_list_favorite_tracks`, `tidal_list_playlists` et `tidal_get_playlist_tracks`.
+
+| Variable | Valeur par défaut / utilisation |
+| --- | --- |
+| `TIDAL_MCP_ENABLE_WRITES` | `false` ; `true` autorise les écritures après redémarrage |
+| `TIDAL_MCP_DATA_DIR` | Répertoire de données utilisateur de la plateforme, application `tidal-local-mcp` |
+| `TIDAL_MCP_SESSION_FILE` | `session.json` dans ce répertoire ; chemin personnalisable |
+| `TIDAL_MCP_DRAFT_TTL_SECONDS` | `900` secondes ; valeurs acceptées de 60 à 3600 |
+
+Les écritures sont désactivées par défaut. Une fois activées, l'assistant doit présenter l'aperçu exact, obtenir votre accord, puis appeler `tidal_commit_action` avec le jeton de cet aperçu. Un aperçu expiré doit être recréé. Après un échec dont le résultat est incertain, inspectez la collection avant de préparer un nouvel aperçu.
+
+Exemple : « Propose une playlist à partir de mes favoris et montre-moi son contenu avant de la créer. »
+
+## Développement
+
+Dans l'environnement activé :
+
+```sh
+python -m pip install pytest
+python -m pytest
+```
+
+## Confidentialité
+
+Ne commitez pas vos clés, jetons, fichiers de session ou exports personnels. Les outils peuvent renvoyer des données du compte connecté au client MCP ; vérifiez ces résultats avant de les partager.
 
 ## Changes in this derivative
 
 Authentication and logout success messages omit local filesystem paths and account identifiers. Regression tests verify that successful authentication does not print these values.
 
-Only GitHub source distribution is configured; this derivative is not published to npm or PyPI.
+Cette version est distribuée sous forme de sources sur GitHub, sans publication npm ou PyPI.
 
 On Windows, local session confidentiality relies on the ACLs of your user-data directory; POSIX mode bits do not enforce owner-only access there. Keep custom storage directories private.
 
@@ -63,7 +91,7 @@ Installe d'abord le projet avec les commandes ci-dessus. Ouvre la configuration 
 }
 ```
 
-Un [fichier exemple](examples/claude_desktop_config.example.json) est fourni. Remplace les chemins génériques et les valeurs `REPLACE_…` uniquement dans ta configuration privée. Sous macOS/Linux, utilise le chemin absolu du dépôt et `.venv/bin/python` à la place de `.venv/Scripts/python.exe`. Pour Steam, utilise le chemin absolu de Node si Claude ne le trouve pas. Aucun terminal interactif ne doit être nécessaire au démarrage. Redémarre Claude après modification.
+Un [fichier exemple](examples/claude_desktop_config.example.json) est fourni. Remplace les chemins génériques et les valeurs `REPLACE_…` uniquement dans ta configuration privée. Sous macOS/Linux, utilise le chemin absolu du dépôt et `.venv/bin/python` à la place de `.venv/Scripts/python.exe`. Aucun terminal interactif ne doit être nécessaire au démarrage. Redémarre Claude après modification.
 
 ### Claude Code
 
@@ -97,7 +125,7 @@ Exécute `tidal-auth` dans le même environnement et sous le même utilisateur q
 
 Essaie : « Vérifie mon authentification TIDAL avec tidal_auth_status. » Les résultats des outils et ressources peuvent contenir des données de ton compte ; le client qui les consulte les reçoit. Si le serveur ne démarre pas, vérifie les chemins absolus, l'installation des dépendances et les variables d'environnement. Si ChatGPT ne propose pas ton tunnel, vérifie ses droits et son rattachement à l'espace. Ne renseigne pas l'URL GitHub comme URL de serveur MCP.
 
-Références : [Claude local](https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop), [Claude Code MCP](https://code.claude.com/docs/en/mcp), [connecteurs Claude distants](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp). Documentation vérifiée le 10 octobre 2026.
+Références : [Claude local](https://support.claude.com/en/articles/10949351-getting-started-with-local-mcp-servers-on-claude-desktop), [Claude Code MCP](https://code.claude.com/docs/en/mcp), [connecteurs Claude distants](https://support.claude.com/en/articles/11175166-get-started-with-custom-connectors-using-remote-mcp). Voir ces guides pour les réglages propres à chaque client.
 
 ## Soutenir le projet
 
